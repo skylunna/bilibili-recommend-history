@@ -110,7 +110,7 @@ async function loadSettings() {
       // 应用设置到UI
       document.getElementById('autoSave').checked = settings.autoSave;
       document.getElementById('showNotification').checked = settings.showNotification;
-      document.getElementById('maxHistory').value = settings.maxHistory;
+      document.getElementById('maxHistory').value = String(settings.maxHistory);
     }
     
   } catch (error) {

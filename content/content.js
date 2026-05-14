@@ -8,6 +8,7 @@
 let sidebarOpen = false;
 let sidebarIframe = null;
 let historyButton = null;
+let isFirstRecommendLoad = true; // 跳过页面初始加载的推荐，只记录换一换后的
 
 // ==================== 页面加载完成后初始化 ====================
 
@@ -44,6 +45,12 @@ function listenToInterceptor() {
     if (event.source !== window) return;
     if (!event.data || event.data.source !== 'bili-recommend-history-interceptor') return;
     if (event.data.type !== 'RECOMMEND_DATA') return;
+
+    if (isFirstRecommendLoad) {
+      isFirstRecommendLoad = false;
+      console.log('⏭️ 跳过初始加载的推荐数据');
+      return;
+    }
 
     const { item, url } = event.data.data;
     console.log('📦 收到拦截数据，共', item.length, '个视频');

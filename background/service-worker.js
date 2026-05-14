@@ -15,7 +15,7 @@ const STORAGE_KEYS = {
 };
 
 const DEFAULT_SETTINGS = {
-  maxHistory: 20,
+  maxHistory: 2,
   autoSave: true,
   showNotification: true
 };
