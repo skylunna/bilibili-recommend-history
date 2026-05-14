@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>推荐历史</title>
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body>
+  <!-- 头部 -->
+  <header class="sidebar-header">
+    <div class="header-title">
+      <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 14c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z"/>
+        <path d="M8 4v4.4l3.5 2.1-.8 1.3L6.5 9V4z"/>
+      </svg>
+      <h1>推荐历史</h1>
+      <span class="history-count-badge" id="totalCount">0</span>
+    </div>
+    <button class="close-btn" id="closeBtn" title="关闭">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- 工具栏 -->
+  <div class="toolbar">
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="搜索视频标题或UP主..." />
+      <button class="clear-search" id="clearSearch" title="清除搜索">×</button>
+    </div>
+    
+    <div class="toolbar-actions">
+      <button class="tool-btn" id="refreshBtn" title="刷新列表">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z"/>
+        </svg>
+      </button>
+      <button class="tool-btn" id="clearAllBtn" title="清空所有历史">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- 历史记录列表 -->
+  <main class="history-list" id="historyList">
+    <!-- 加载动画 -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>加载中...</p>
+    </div>
+
+    <!-- 空状态 -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="30" stroke="#e1e8ed" stroke-width="2"/>
+        <path d="M32 16v16l11 6.5" stroke="#8899a6" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <h3>还没有历史记录</h3>
+      <p>刷新推荐后，历史记录会显示在这里</p>
+    </div>
+
+    <!-- 历史记录项容器 -->
+    <div class="history-items" id="historyItems">
+      <!-- 动态生成的历史记录 -->
+    </div>
+  </main>
+
+  <!-- 底部信息 -->
+  <footer class="sidebar-footer">
+    <div class="storage-info">
+      <span>已使用: <span id="storageUsed">0</span>%</span>
+      <span>共 <span id="totalHistory">0</span> 条记录</span>
+    </div>
+  </footer>
+
+  <script src="sidebar.js"></script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+/**
+ * B站推荐历史 - Content Script 样式
+ * 注入到B站页面的样式
+ */
+
+/* ==================== 历史按钮 ==================== */
+
+.bili-history-btn-container {
+  display: inline-block;
+  margin-left: 16px;
+  vertical-align: middle;
+}
+
+.bili-history-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #00a1d6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+
+.bili-history-btn:hover {
+  background: #00b5e5;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 161, 214, 0.3);
+}
+
+.bili-history-btn:active {
+  transform: translateY(0);
+}
+
+.bili-history-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.bili-history-btn .history-count {
+  display: none;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: #fb7299;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 9px;
+  line-height: 18px;
+  text-align: center;
+}
+
+/* ==================== 遮罩层 ==================== */
+
+.bili-history-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ==================== 侧边栏 ==================== */
+
+.bili-history-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  height: 100vh;
+  background: white;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  z-index: 10001;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.bili-history-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* ==================== 响应式设计 ==================== */
+
+/* 小屏幕设备 */
+@media (max-width: 768px) {
+  .bili-history-sidebar {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .bili-history-btn {
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+  
+  .bili-history-btn span:first-of-type {
+    display: none; /* 隐藏"推荐历史"文字 */
+  }
+}
+
+/* 中等屏幕 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .bili-history-sidebar {
+    width: 380px;
+  }
+}
+
+/* ==================== 暗黑模式支持 ==================== */
+
+@media (prefers-color-scheme: dark) {
+  .bili-history-sidebar {
+    background: #1a1a1a;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.5);
+  }
+  
+  .bili-history-btn {
+    background: #0e5a8a;
+  }
+  
+  .bili-history-btn:hover {
+    background: #106ba3;
+  }
+}
+
+/* ==================== 滚动条美化 ==================== */
+
+.bili-history-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bili-history-sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.bili-history-sidebar::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 4px;
+}
+
+.bili-history-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+/* ==================== 加载动画 ==================== */
+
+.bili-history-loading {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #00a1d6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ==================== 修复可能的样式冲突 ==================== */
+
+/* 确保按钮在B站的布局中正常显示 */
+.bili-history-btn-container {
+  box-sizing: border-box;
+  position: relative;
+  z-index: 100;
+}
+
+/* 确保侧边栏在最上层 */
+.bili-history-sidebar,
+.bili-history-overlay {
+  position: fixed !important;
+  z-index: 999999 !important;
+}
+
+/* 防止页面滚动时侧边栏移动 */
+body.bili-history-open {
+  overflow: hidden;
+}

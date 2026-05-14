@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "B站推荐历史回溯",
+  "version": "1.0.0",
+  "description": "保存B站推荐内容的历史记录，随时回溯查看之前的推荐视频",
+  
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "permissions": [
+    "storage",
+    "scripting"
+  ],
+
+  "host_permissions": [
+    "*://*.bilibili.com/*"
+  ],
+
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://www.bilibili.com/*"],
+      "js": ["content/interceptor.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["*://www.bilibili.com/*"],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "B站推荐历史"
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["sidebar/sidebar.html", "sidebar/sidebar.css", "sidebar/sidebar.js"],
+      "matches": ["*://www.bilibili.com/*"]
+    }
+  ]
+}

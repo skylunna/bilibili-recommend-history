@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B站推荐历史</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- 头部 -->
+  <header class="popup-header">
+    <div class="logo">
+      <svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 14c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z"/>
+        <path d="M8 4v4.4l3.5 2.1-.8 1.3L6.5 9V4z"/>
+      </svg>
+      <h1>B站推荐历史</h1>
+    </div>
+    <span class="version">v1.0.0</span>
+  </header>
+
+  <!-- 统计卡片 -->
+  <section class="stats-section">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value" id="totalSaved">0</div>
+        <div class="stat-label">已保存记录</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+          <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12z"/>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value" id="totalVideos">0</div>
+        <div class="stat-label">推荐视频数</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 最近活动 -->
+  <section class="activity-section">
+    <h2>最近活动</h2>
+    <div class="activity-item">
+      <span class="activity-label">最后保存:</span>
+      <span class="activity-value" id="lastSaveTime">--</span>
+    </div>
+    <div class="activity-item">
+      <span class="activity-label">存储使用:</span>
+      <span class="activity-value">
+        <span id="storageUsed">0</span>%
+        <span class="storage-bar">
+          <span class="storage-fill" id="storageFill"></span>
+        </span>
+      </span>
+    </div>
+  </section>
+
+  <!-- 设置选项 -->
+  <section class="settings-section">
+    <h2>设置</h2>
+    
+    <div class="setting-item">
+      <div class="setting-info">
+        <label for="autoSave">自动保存</label>
+        <p>刷新推荐时自动保存历史</p>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="autoSave" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-info">
+        <label for="showNotification">显示通知</label>
+        <p>保存成功时显示桌面通知</p>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="showNotification" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-info">
+        <label for="maxHistory">最大记录数</label>
+        <p>保存的最大历史数量</p>
+      </div>
+      <select id="maxHistory">
+        <option value="10">10 条</option>
+        <option value="20" selected>20 条</option>
+        <option value="50">50 条</option>
+        <option value="100">100 条</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- 快捷操作 -->
+  <section class="actions-section">
+    <button class="action-btn primary" id="openBilibili">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
+        <path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+      </svg>
+      访问 B站首页
+    </button>
+
+    <button class="action-btn" id="exportHistory">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+        <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+      </svg>
+      导出数据
+    </button>
+
+    <button class="action-btn danger" id="clearAll">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+      </svg>
+      清空所有
+    </button>
+  </section>
+
+  <!-- 底部链接 -->
+  <footer class="popup-footer">
+    <a href="#" id="helpLink">使用帮助</a>
+    <span>·</span>
+    <a href="#" id="feedbackLink">反馈建议</a>
+    <span>·</span>
+    <a href="#" id="aboutLink">关于</a>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
