@@ -4,6 +4,9 @@
  * 通过 window.postMessage 将数据传给隔离世界的 content.js
  */
 (function () {
+  let _contentScriptReady = false;
+  let _bufferedMessage = null; // 缓存 content.js 就绪前的第一条数据
+
   function isRecommendApi(url) {
     return typeof url === 'string' &&
       url.includes('api.bilibili.com') &&
@@ -11,30 +14,46 @@
   }
 
   function sendToContentScript(item, url) {
-    window.postMessage({
+    const msg = {
       source: 'bili-recommend-history-interceptor',
       type: 'RECOMMEND_DATA',
       data: { item, url }
-    }, '*');
+    };
+    if (_contentScriptReady) {
+      window.postMessage(msg, '*');
+    } else if (!_bufferedMessage) {
+      // content.js 还未就绪，只缓存第一条（页面初始加载的推荐）
+      _bufferedMessage = msg;
+    }
   }
+
+  // 监听 content.js 的就绪信号，收到后补发缓存的数据
+  window.addEventListener('message', (event) => {
+    if (event.data && event.data.source === 'bili-recommend-history-content-ready') {
+      _contentScriptReady = true;
+      if (_bufferedMessage) {
+        window.postMessage(_bufferedMessage, '*');
+        _bufferedMessage = null;
+      }
+    }
+  });
 
   // 拦截 Fetch API
   const originalFetch = window.fetch;
-  window.fetch = function (...args) {
+  window.fetch = async function (...args) {
     const url = args[0] instanceof Request ? args[0].url : args[0];
-    return originalFetch.apply(this, args).then(async (response) => {
-      if (isRecommendApi(url)) {
-        try {
-          const data = await response.clone().json();
-          if (data && data.code === 0 && data.data && data.data.item) {
-            sendToContentScript(data.data.item, url);
-          }
-        } catch (e) {
-          // 忽略解析错误，不影响正常响应
+    const response = await originalFetch.apply(this, args);
+    if (isRecommendApi(url)) {
+      try {
+        const data = await response.clone().json();
+        if (data && data.code === 0 && data.data && data.data.item) {
+          sendToContentScript(data.data.item, url);
         }
+      } catch (e) {
+        // 忽略解析错误，不影响正常响应
       }
-      return response;
-    });
+    }
+    return response;
   };
 
   // 拦截 XMLHttpRequest

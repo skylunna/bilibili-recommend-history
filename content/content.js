@@ -8,7 +8,7 @@
 let sidebarOpen = false;
 let sidebarIframe = null;
 let historyButton = null;
-let isFirstRecommendLoad = true; // 跳过页面初始加载的推荐，只记录换一换后的
+let pendingRecord = null; // 暂存上一批推荐，等下次换一换时作为历史保存
 
 // ==================== 页面加载完成后初始化 ====================
 
@@ -46,18 +46,23 @@ function listenToInterceptor() {
     if (!event.data || event.data.source !== 'bili-recommend-history-interceptor') return;
     if (event.data.type !== 'RECOMMEND_DATA') return;
 
-    if (isFirstRecommendLoad) {
-      isFirstRecommendLoad = false;
-      console.log('⏭️ 跳过初始加载的推荐数据');
+    const { item, url } = event.data.data;
+
+    if (pendingRecord === null) {
+      // 第一次（页面初始加载）：暂存，不保存
+      pendingRecord = { item, url };
+      console.log('📦 暂存初始推荐数据，共', item.length, '个视频');
       return;
     }
 
-    const { item, url } = event.data.data;
-    console.log('📦 收到拦截数据，共', item.length, '个视频');
+    // 换一换触发：把上一批（pendingRecord）存入历史，再暂存这一批
+    const toSave = pendingRecord;
+    pendingRecord = { item, url };
+    console.log('📦 保存上一批推荐数据，共', toSave.item.length, '个视频');
 
     chrome.runtime.sendMessage({
       type: 'SAVE_RECOMMEND_DATA',
-      data: { item, source: 'refresh', url }
+      data: { item: toSave.item, source: 'refresh', url: toSave.url }
     }).then(response => {
       if (response && response.success) {
         console.log('✅ 数据已保存:', response.message);
@@ -67,6 +72,9 @@ function listenToInterceptor() {
       console.error('❌ 保存数据失败:', err);
     });
   });
+
+  // 通知拦截器 content.js 已就绪，触发补发缓存的页面初始加载数据
+  window.postMessage({ source: 'bili-recommend-history-content-ready' }, '*');
 }
 
 // ==================== UI 注入 ====================
@@ -263,7 +271,7 @@ function closeSidebar() {
  */
 function listenToMessages() {
   // 来自 Service Worker / popup 的消息
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     console.log('📨 收到消息:', message.type);
 
     switch (message.type) {
@@ -302,7 +310,7 @@ function listenToMessages() {
 /**
  * 监听页面变化（处理B站的单页应用导航）
  */
-const observer = new MutationObserver((mutations) => {
+const observer = new MutationObserver(() => {
   // 检查是否需要重新添加按钮
   if (!document.getElementById('bili-recommend-history-btn')) {
     const recommendArea = findRecommendArea();
