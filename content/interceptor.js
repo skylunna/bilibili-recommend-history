@@ -5,7 +5,7 @@
  */
 (function () {
   let _contentScriptReady = false;
-  let _bufferedMessage = null; // 缓存 content.js 就绪前的第一条数据
+  let _bufferedMessage = null;
 
   function isRecommendApi(url) {
     return typeof url === 'string' &&
@@ -19,15 +19,16 @@
       type: 'RECOMMEND_DATA',
       data: { item, url }
     };
+
     if (_contentScriptReady) {
       window.postMessage(msg, '*');
     } else if (!_bufferedMessage) {
-      // content.js 还未就绪，只缓存第一条（页面初始加载的推荐）
+      // content.js 未就绪，只缓存第一条
       _bufferedMessage = msg;
     }
   }
 
-  // 监听 content.js 的就绪信号，收到后补发缓存的数据
+  // 监听 content.js 就绪信号，补发缓存的数据
   window.addEventListener('message', (event) => {
     if (event.data && event.data.source === 'bili-recommend-history-content-ready') {
       _contentScriptReady = true;
