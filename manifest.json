@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "B站推荐历史回溯",
   "version": "1.0.0",
-  "description": "保存B站推荐内容的历史记录，随时回溯查看之前的推荐视频",
+  "description": "保存B站推荐内容的历史记录，随时回溯查看之前的推荐视频。支持搜索、导出、按日期分组展示。",
   
   "icons": {
     "16": "icons/icon16.png",
