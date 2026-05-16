@@ -233,7 +233,9 @@ function parseRecommendData(items) {
     return [];
   }
   
-  return items.map(item => {
+  return items
+    .filter(item => item.bvid && item.title && (item.pic || item.cover))
+    .map(item => {
     return {
       bvid: item.bvid || '',
       title: item.title || '',

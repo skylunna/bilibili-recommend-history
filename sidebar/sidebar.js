@@ -519,6 +519,7 @@ function isSameDay(date1, date2) {
  */
 function ensureHttps(url) {
   if (!url) return '';
+  if (url.startsWith('//')) return 'https:' + url;
   return url.replace(/^http:\/\//, 'https://');
 }
 
